@@ -15,14 +15,17 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV["DATABASE_HOST"] || "localhost" %>
+  username: <%= ENV["DATABASE_USER"] || "postgres" %>
+  password: <%= ENV["DATABASE_PASSWORD"] || "password" %>
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
-  database: __money_app_backend_development
+  database: <%= ENV["DATABASE_NAME"] || "money_app_development" %>
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -56,7 +59,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: __money_app_backend_test
+  database: <%= ENV["DATABASE_NAME"] || "money_app_test" %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -87,18 +90,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: __money_app_backend_production
-    username: __money_app_backend
-    password: <%= ENV["__MONEY_APP_BACKEND_DATABASE_PASSWORD"] %>
+    database: <%= ENV["DATABASE_NAME"] || "money_app_production" %>
+    username: <%= ENV["DATABASE_USER"] || "money_app_backend" %>
+    password: <%= ENV["DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: __money_app_backend_production_cache
+    database: <%= ENV["DATABASE_NAME"] || "money_app_production_cache" %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: __money_app_backend_production_queue
+    database: <%= ENV["DATABASE_NAME"] || "money_app_production_queue" %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: __money_app_backend_production_cable
+    database: <%= ENV["DATABASE_NAME"] || "money_app_production_cable" %>
     migrations_paths: db/cable_migrate
